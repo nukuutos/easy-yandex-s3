@@ -20,90 +20,53 @@ Let's go!
 
 ## Contents
 
-- [Theory](#theory-orly) - what is storage and how does it work
-- [Instructions](#create-a-service-account-in-yandexcloud) for creating a service account
+- [Instruction](#introduction)
 - [Get started](#get-started)
-- - [File upload](#file-upload)
-- - - [Upload files](#upload-files)
-- - [Get list of directories and files of bucket](#getting-a-list-of-bucket-directories-and-files)
-- - [Download file from bucket](#download-a-file)
-- - [Remove file from bucket](#remove-a-file)
-- - [Remove every file from bucket](#remove-every-file-from-bucket)
-- [Examples](#примеры-использования)
-- - [Upload with multer](#multer-и-express)
-- [Developer @powerdot](https://github.com/powerdot/)
-- [Developer @nukuutos](https://github.com/nukuutos/)
+- [File upload](#file-upload)
+- [Upload files](#upload-files)
+- [Get list of directories and files](#getting-a-list-of-bucket-directories-and-files)
+- [Download a file](#download-a-file)
+- [Remove a file](#remove-a-file)
+- [Remove every file](#remove-every-file-from-bucket)
+- [Examples](#examples)
+- - [Upload with multer](#multer-and-express)
 
-Link to official Yandex docs.  
-https://cloud.yandex.ru/docs/storage/s3/
+Links:  
+- [Official Yandex docs](https://cloud.yandex.ru/docs/storage/s3)  
+- [Description of S3 API Amazon](https://docs.aws.amazon.com/en_us/AmazonS3/latest/API/Welcome.html)
 
-Link to description of S3 API Amazon  
-https://docs.aws.amazon.com/en_us/AmazonS3/latest/API/Welcome.html
+Developers:
+- [@powerdot](https://github.com/powerdot/)
+- [@nukuutos](https://github.com/nukuutos/)
 
-## Theory O'RLY
 
-The storage consists of buckets.
-Bucket is, roughly speaking, your hard drive on the Internet.
-To upload something to Yandex.Cloud and store your files there, you need to create this bucket.
+## Introduction
 
-Bucket has an ID. The ID matches its name, which you come up with, for example **my-storage**.
+You can read [theory](bucket-theory.md) about working with bucket and guid to [create a service account and obtain static access key](service-account-and-static-access-key.md). For working with this package you need `accessKeyId` and `secretAccessKey` that you get after creating a `static access key`
 
-Bucket access can be obtained using a special account, it is called **service account**.
-
-From the service account there is a login and password, together login and password are called **key**, where the login is **"Key ID"**, and the password is **"Private key"**. Don't be afraid, everything is very easy here :)
-
-And so, suppose you have already made your bucket (I don’t tell you how to do it, everything is quite simple there). Or maybe even already you made folders inside (by the way, this is not necessary).
-
-Time to get access for manipulations with our bucket!
-
-## Create a service account in Yandex.Cloud
-
-1. Log in to your personal account 
-   https://console.cloud.yandex.ru/cloud
-
-2. In directories, select the desired directory in the list on the right.
-
-3. In the menu on the left, click _Service accounts_
-
-4. Click on the top right _Create service account_
-
-5. Come up with a name for the account, you won't need it. Add Roles: iam.serviceAccounts.user, editor. Save.
-
-6. Click on a service account to open it.
-
-7. Click on the top right "Create new key" -> "Create static access key"
-
-8. Come up with a description. Create it.
-
-9. You have a window with 2 keys. Copy them somewhere, because the secret key is issued 1 time in this bundle. You won't see him again.
-
-Congratulation! Now you have **Key ID** (accessKeyId) and **Private key** (secretAccessKey).
 
 ## Get Started
 
 Install it with npm
 
 ```bash
-npm i easy-yandex-s3
+npm i --save easy-yandex-s3
 ```
 
 ### Initialization stage
 
 ```javascript
-// import module
-var EasyYandexS3 = require('easy-yandex-s3');
+const EasyYandexS3 = require('easy-yandex-s3');
 
-// initialization
-var s3 = new EasyYandexS3({
+const s3 = new EasyYandexS3({
   auth: {
     accessKeyId: 'KEY_ID',
-    secretAccessKey: 'PRIVATE_KEY',
+    secretAccessKey: 'SECRET_KEY',
   },
   Bucket: 'BUCKET_NAME',
-  debug: true, // debug by console.log
+  debug: true, // debug by output in console
 });
 ```
-
 ---
 
 ### File upload
@@ -467,49 +430,49 @@ Technically, files are deleted in batches by 1000 files. Each batch will have it
 false
 ```
 
-## Примеры использования
+## Examples
 
-### Multer и Express
+### Multer and Express
 
-Пример загрузки файлов через multer и express.  
-Кейс: нужно загрузить файл с фронта на сервер, а потом загрузить его на Yandex Object Storage.
+An example of uploading files via multer and express.
+Case: you need to upload a file from the client to the server, and then upload it to Yandex Object Storage.
 
-- Устанавливаешь express и multer
+- Installing express and multer
 
 ```bash
 npm i express
 npm i multer
 ```
 
-- В файле проекта привязываешь multer и easy-yandex-s3
+- Importing multer and easy-yandex-s3
 
 ```javascript
-// Создаем веб-сервер
+// Creating a web server
 var express = require('express');
 var app = express();
 app.listen(8000);
 
-// Подключаем multer и eys3
+// Importing multer и eys3
 var multer = require('multer');
 var EasyYandexS3 = require('easy-yandex-s3');
 
-// Указываем аутентификацию в Yandex Object Storage
+// Setting up s3 object
 var s3 = new EasyYandexS3({
   auth: {
     accessKeyId: '',
     secretAccessKey: '',
   },
-  Bucket: 'my-storage', // Название бакета
-  debug: false, // Дебаг в консоли
+  Bucket: 'my-storage', 
+  debug: false, 
 });
 
-// Подключаешь мидлвар multer для чтения загруженных файлов
+// Running multer middleware for uploading files
 app.use(multer().any());
 
-// Делаешь фетч post-запроса с отправленным файлом по ссылке /uploadFile
+// Making a post request with file be route /uploadFile
 app.post('/uploadFile', async (req, res) => {
-  let buffer = req.files[0].buffer; // Буфер загруженного файла
-  var upload = await s3.Upload({ buffer }, '/files/'); // Загрузка в бакет
-  res.send(upload); // Ответ сервера - ответ от Yandex Object Storage
+  let buffer = req.files[0].buffer; // Buffer of uploaded file
+  var upload = await s3.Upload({ buffer }, '/files/'); // Upload to bucket
+  res.send(upload); // Sever responds with response from Yandex Object Storage
 });
 ```
