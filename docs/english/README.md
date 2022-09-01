@@ -132,108 +132,35 @@ const result = await s3.Upload(
 
 [More examples of folder uploading](./methods/folder-upload.md)
 
+## Upload files
+
+Upload an array of files 
+
 ```javascript
-{
-  ETag: '"md5sum"',
-  VersionId: 'null',
-  Location:
-   'https://actid-storage.storage.yandexcloud.net/test1/name.png',
-  key: 'test1/name.png',
-  Key: 'test1/name.png',
-  Bucket: 'my-storage'
-}
+s3.Upload(files, folderPathS3)
 ```
 
-#### Upload files
+`files` is an array of file-objects with the following properties:
+- `name` - set new name to file on s3 bucket.
+- `path` - path to local file that you want to upload. 
+- `save_name` - allows to save name of file that you want to upload. By default we assign to file a uuid as filename on s3 bucket. 
+- `buffer` - buffer object that you want to upload.
 
-- Upload content of a local folder -> [bucket]/folder_on_server/
+Providing `buffer` or `path` for file-object is required!
 
-Our module takes files and subfolders inside local folder.
-
-Suppose a folder `./my_folder`:
-
-- my_folder
-- - 1.png
-- - 2.png
-- - folder_inside
-- - - 3.png
-
-Set `route` parameter to "**folder_on_server**", and we get this path on s3 `[my_bucket]/folder_on_server/`  
-Our files after uploading to s3:
-
-`[my_bucket]/folder_on_server/1.png `
-`[my_bucket]/folder_on_server/2.png `
-`[my_bucket]/folder_on_server/folder_inside/3.png `
-
+Example of uploading array of files. Upload files to `test` folder on s3
 ```javascript
-// Relative path:
-var upload = await s3.Upload(
-  {
-    path: './my_folder', // relative path to folder
-    save_name: true, // save original names of files
-  },
-  '/folder_on_server/'
-);
-console.log(upload); // <- array of uploaded files
-```
-
-```javascript
-// Ignore files and folders inside
-var upload = await s3.Upload(
-  {
-    path: './my_folder', // relative path to folder
-    save_name: true, // save original names of files
-    ignore: ['.git', '/assets/video'], // ignore .git and path /assets/video
-  },
-  '/folder_on_server/'
-);
-console.log(upload); // <- array of uploaded files
-```
-
-```javascript
-// absolute path to local file:
-var upload = await s3.Upload(
-  {
-    path: '/Users/powerdot/sites/example.com/', // absolute path to folder
-    save_name: true, // save original names of files
-  },
-  '/folder_on_server/'
-);
-console.log(upload); // <- array of uploaded files
-```
-
-- Upload files with an array of files 
-  files array -> [bucket]/folder_on_server/
-
-```javascript
-// using an array of files:
-var upload = await s3.Upload(
+const result = await s3.Upload(
   [
-    { path: './file1.jpg', save_name: true }, // relative path to file, save name of this file
-    { path: '/Users/powerodt/dev/sites/folder/file2.css' }, // absolute path to file, filename will be updated to md5-checksum
-    { path: './file.html', name: 'index.html' }, // relative path to file with new name index.html
+    { path: './file1.jpg', save_name: true }, 
+    { path: '/Users/powerdot/dev/sites/folder/file2.css' },
+    { path: './file.html', name: 'index.html' },
   ],
-  '/folder_on_server/'
+  '/test'
 );
 ```
 
-**return:**  
-Array with uploaded objects
-
-```javascript
-[
-    {
-        ETag: '"md5sum"',
-        VersionId: 'null',
-        Location:
-            'https://actid-storage.storage.yandexcloud.net/test1/name.png',
-        key: 'test1/name.png',
-        Key: 'test1/name.png',
-        Bucket: 'actid-storage'
-    },
-    ...
-]
-```
+[More examples of folder uploading](./methods/upload-files.md)
 
 ### Getting a list of bucket directories and files
 
