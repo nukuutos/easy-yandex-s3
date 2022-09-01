@@ -23,6 +23,7 @@ Let's go!
 - [Instruction](#introduction)
 - [Get started](#get-started)
 - [File upload](#file-upload)
+- [Folder upload](#folder-upload)
 - [Upload files](#upload-files)
 - [Get list of directories and files](#getting-a-list-of-bucket-directories-and-files)
 - [Download a file](#download-a-file)
@@ -102,57 +103,35 @@ const result = await s3.Upload(
 
 [More examples of file uploading](./methods/file-upload.md)
 
-```javascript
-var upload = await s3.Upload(
-  {
-    path: path.resolve(__dirname, './123.png'),
-    name: 'lolkek.png',
-  },
-  '/test/'
-);
+## Folder upload
 
-// Returns path to file in s3 and other stuff
-// if it returns false - error is happened
-// File is uploaded to [my-storage]/test/lolkek.png
-console.log(upload); 
-```
-
-- Upload a buffer 
-  <Buffer> -> [bucket-name]/test/cad9c7a68dca57ca6dc9a7dc8a86c.png
+Upload only <ins>**content**</ins> of a local folder!
 
 ```javascript
-var upload = await s3.Upload(
-  {
-    buffer: file_buffer,
-  },
-  '/test/'
-);
-
-// Returns path to file in s3 and other stuff
-// if it returns false - error is happened
-// File is uploaded to [my-storage]/test/{md5_checksum}.{file extension}
-console.log(upload); 
+s3.Upload(parameters, folderPathS3)
 ```
 
-- Upload a buffer with filename and extension
-  <Buffer> -> [bucket-name]/test/lolkek.png
+`parameters` object has next fields:
+- `path` - path to the folder whose contents you want to upload. 
+- `save_name` - allows to save original filenames. By default we assign to file a uuid as filename on s3 bucket. 
+- `ignore` - array of files and directories that you want to ignore.
+
+`folderPathS3` - path to folder on bucket.
+
+Example of uploading content of `my-folder` to `test` folder on bucket. We save filenames and ignore `file.txt` file and ignore `/assets/video` directory 
 
 ```javascript
-var upload = await s3.Upload(
+const result = await s3.Upload(
   {
-    buffer: file_buffer,
-    name: 'lolkek.png',
+    path: './my-folder',
+    save_name: true, 
+    ignore: ['file.txt', '/assets/video']
   },
-  '/test/'
+  '/test'
 );
-
-// Returns path to file in s3 and other stuff
-// if it returns false - error is happened
-// File is uploaded to [my-storage]/test/lolkek.png
-console.log(upload); 
 ```
 
-**return:**
+[More examples of folder uploading](./methods/folder-upload.md)
 
 ```javascript
 {
