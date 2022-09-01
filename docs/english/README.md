@@ -68,7 +68,6 @@ const s3 = new EasyYandexS3({
   debug: true, // debug by output in console
 });
 ```
----
 
 ## File upload
 
