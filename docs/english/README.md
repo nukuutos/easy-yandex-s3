@@ -28,7 +28,7 @@ Let's go!
 - [List content](#list-content)
 - [Download a file](#download-a-file)
 - [Remove a file](#remove-a-file)
-- [Remove every file](#remove-every-file-from-bucket)
+- [Clean up](#clean-up)
 - [Examples](#examples)
 - - [Upload with multer](#multer-and-express)
 
@@ -237,33 +237,23 @@ const result = await s3.Remove('test/123.png');
 - `false` on error.
 
 
-### Remove every file from bucket
+## Clean up
+
+Remove every file from bucket
 
 General usage:
 
 ```javascript
-.CleanUp()
+s3.CleanUp()
 ```
 
-Clean up bucket:
+Example of bucket clean up:
 
 ```javascript
-var result = await s3.CleanUp();
+const result = await s3.CleanUp();
 ```
 
-Technically, files are deleted in batches by 1000 files. Each batch will have its own `Deleted` and `Errors` keys, which contain data about successfully deleted objects (files) and data about files that caused an error to be deleted. <br />
-**return:**
-
-```javascript
-// Successfully deleted 3 objects
-[ { Deleted: [ [Object], [Object], [Object] ], Errors: [] } ]
-
-// What is object in side
-{ Key: '/path/to/file/in/bucket', VersionId: 'null' }
-
-// On unsuccessfully running of 'CleanUp' method you've got next result:
-false
-```
+[More on clean up method](./methods/clean-up.md)
 
 ## Examples
 
