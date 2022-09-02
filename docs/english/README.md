@@ -186,49 +186,33 @@ const { Contents, CommonPrefixes } = await s3.GetList('/test');
 [More examples of listing content](./methods/list-content.md)
 
 
-### Download a file
+## Download a file
+
+Download a file from bucket
 
 General usage:
 
 ```javascript
-.Download(
-    "path/to/file/in/bucket",
-    "path/to/save/file/locally"
+s3.Download(
+    filepathS3,
+    pathToDownload
 );
 ```
 
-- Download file and get buffer of this file
+- `filepathS3` - path to file on s3.  
+- `pathToDownload` - path for saving on your machine.
+
+`pathToDownload` is optional argument. When you download a file from the bucket you always receive a buffer of this file.   
+
+Example of downloading file and saving it.
 
 ```javascript
-var download = await s3.Download('test/123.png');
+const result = await s3.Download('test/bucket-file.png', './my-file.png');
 ```
+`result.data.Body` - has a buffer of `bucket-file.png`
 
-- Download file and save it to local file
+[More examples of downloading file](./methods/download-file.md)
 
-```javascript
-var download = await s3.Download('test/123.png', './myfile.png');
-
-// download variable also has a buffer of downloaded file
-// received file from bucket will be saved as myfile.png
-```
-
-**return:**
-
-```javascript
-{
-  data: {
-    AcceptRanges: "bytes",
-    LastModified: new Date("2019-07-15T22:10:09.000Z"),
-    ContentLength: 20705,
-    ETag: '"md5sum"',
-    ContentType: "application/octet-stream",
-    Metadata: {},
-    Body: Buffer.from("250001000192CD0000002F6D6E742F72", "hex"),
-  },
-  destinationFullPath: false,
-  fileReplaced: false,
-};
-```
 
 ### Remove a file
 
