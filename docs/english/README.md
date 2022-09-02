@@ -214,31 +214,28 @@ const result = await s3.Download('test/bucket-file.png', './my-file.png');
 [More examples of downloading file](./methods/download-file.md)
 
 
-### Remove a file
+## Remove a file
+
+Remove a file from bucket
 
 General usage:
 
 ```javascript
-.Remove(
-    "/path/to/file/in/bucket"
-);
+s3.Remove(path);
 ```
 
-- Remove a file
+- `filepathS3` - path to file that you want to delete on s3. 
+
+Example of removing a file from bucket
 
 ```javascript
-var remove = await s3.Remove('test/123.png');
+const result = await s3.Remove('test/123.png');
 
-// Returns true или false.
-// true - file is removed successfully, even if the file does not exist
-// false - error
 ```
+`result` is 
+- `true` on successful removal, even if file does not exist.  
+- `false` on error.
 
-**return:**
-
-```javascript
-true;
-```
 
 ### Remove every file from bucket
 
