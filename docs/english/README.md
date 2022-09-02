@@ -25,7 +25,7 @@ Let's go!
 - [File upload](#file-upload)
 - [Folder upload](#folder-upload)
 - [Upload files](#upload-files)
-- [Get list of directories and files](#getting-a-list-of-bucket-directories-and-files)
+- [List content](#list-content)
 - [Download a file](#download-a-file)
 - [Remove a file](#remove-a-file)
 - [Remove every file](#remove-every-file-from-bucket)
@@ -162,64 +162,29 @@ const result = await s3.Upload(
 
 [More examples of folder uploading](./methods/upload-files.md)
 
-### Getting a list of bucket directories and files
+## List content
+
+List content that is in a specific directory
 
 General usage:
 
 ```javascript
-.GetList(
-    "path/to/folder/in/bucket"
-);
+s3.GetList(path);
 ```
 
-- Get root of the bucket
+`path` - path to directory content(file and folders) whose you want to list 
+
+Example of listing files and subfolder in `test` directory
 
 ```javascript
-var list = await s3.GetList();
+const { Contents, CommonPrefixes } = await s3.GetList('/test');
 ```
 
-- Getting a list of subfolder and files of specific directory
+- `Contents` is an array that contains files that are in folder `test`
+- `CommonPrefixes` is an array that contains subfolders that are in folder `test`
 
-```javascript
-var list = await s3.GetList('/test/');
-```
+[More examples of listing content](./methods/list-content.md)
 
-- `Contents` - contains files that are in folder `test`
-- `CommonPrefixes` - contains subfolders that are in folder `test`
-
-**return:**
-
-```javascript
-{
-  IsTruncated: false,
-  Contents: [
-    {
-      Key: 'eys3-testing/file1.rtf',
-      LastModified: new Date("2022-08-24T01:55:02.431Z"),
-      ETag: '"ee4e1fb1ab82ee0a650d8e4a8c274d9b"',
-      ChecksumAlgorithm: [],
-      Size: 413,
-      StorageClass: 'STANDARD',
-      Owner: [Object]
-    },
-    {
-      Key: 'eys3-testing/file2.rtf',
-      LastModified: new Date("2022-08-24T01:55:02.483Z"),
-      ETag: '"ee4e1fb1ab82ee0a650d8e4a8c274d9b"',
-      ChecksumAlgorithm: [],
-      Size: 413,
-      StorageClass: 'STANDARD',
-      Owner: [Object]
-    }
-  ],
-  Name: 's3library',
-  Prefix: 'eys3-testing/',
-  Delimiter: '/',
-  MaxKeys: 1000,
-  CommonPrefixes: [ { Prefix: 'eys3-testing/folder1/' } ],
-  KeyCount: 3
-}
-```
 
 ### Download a file
 
